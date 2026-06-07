@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { extension_settings, getContext } from "../../../extensions.js";
-import { saveSettingsDebounced, generateQuietPrompt, saveChat, reloadCurrentChat, eventSource, event_types, addOneMessage, getRequestHeaders, appendMediaToMessage } from "../../../../script.js";
+import { saveSettingsDebounced, generateQuietPrompt, saveChatConditional, reloadCurrentChat, eventSource, event_types, addOneMessage, getRequestHeaders, appendMediaToMessage } from "../../../../script.js";
 import { saveBase64AsFile } from "../../../utils.js";
 import { humanizedDateTime } from "../../../RossAscends-mods.js";
 import { Popup, POPUP_TYPE } from "../../../popup.js";
@@ -724,7 +724,7 @@ async function insertImageToChat(imgUrl, promptText, target = null) {
             target.message.extra.media.push(mediaAttachment);
             target.message.extra.media_index = target.message.extra.media.length - 1;
             if (typeof appendMediaToMessage === "function") appendMediaToMessage(target.message, target.element);
-            await saveChat();
+            await saveChatConditional();
             toastr.success("Gallery updated!");
         } else {
             const newMessage = {
@@ -732,7 +732,7 @@ async function insertImageToChat(imgUrl, promptText, target = null) {
                 mes: "", extra: { media: [mediaAttachment], media_display: "gallery", media_index: 0, inline_image: false }, force_avatar: "img/five.png"
             };
             context.chat.push(newMessage);
-            await saveChat();
+            await saveChatConditional();
             if (typeof addOneMessage === "function") addOneMessage(newMessage);
             else await reloadCurrentChat();
             toastr.success("Image inserted!");
